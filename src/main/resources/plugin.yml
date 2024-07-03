@@ -1,0 +1,26 @@
+name: DiscordVerificator
+version: '${project.version}'
+main: net.justempire.discordverificator.DiscordVerificatorPlugin
+api-version: '1.16'
+author: 'mrquackduck'
+
+commands:
+  link:
+    description: Link player to Discord profile
+    usage: link <Player> <Discord Id>
+  unlink:
+    description: Unlink player from Discord
+    usage: unlink <Player>
+  dvreload:
+    description: Reload the plugin
+
+permissions:
+  discordVerificator.link:
+    description: Allows to link player to Discord profile
+    default: op
+  discordVerificator.unlink:
+    description: Allows to unlink player from Discord profile
+    default: op
+  discordVerificator.reload:
+    description: Allows to reload the plugin
+    default: op

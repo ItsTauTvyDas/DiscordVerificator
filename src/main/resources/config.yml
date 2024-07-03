@@ -1,0 +1,39 @@
+# 1. Create discord bot on discord developer portal: https://discord.com/developers/applications
+# 2. In "Bot" tab
+#    - Make sure to enable "Presence Intent"
+#    - Make sure to enable "Server Members Intent"
+#    - Make sure to enable "Message Content Intent"
+# 3. Invite the bot on your Discord server
+
+# (!) WARNING: In order to send messages to linked players, bot should share the same Discord server with
+# these members! Make sure to warn your players about this.
+token: "DISCORD_BOT_TOKEN"
+
+messages:
+  "not-enough-permissions": "&cNot enough permissions!"
+  "invalid-link-format": "&cInvalid format! Please use: /link <Player> <Discord ID>"
+  "invalid-unlink-format": "&cInvalid format! Please use: /unlink <Player>"
+  "invalid-user-id-format": "&cInvalid User ID format!"
+  "successfully-linked": "&aSuccessfully linked!"
+  "successfully-unlinked": "&aSuccessfully unlinked!"
+  "player-already-linked": "&cThis player was already linked!"
+  "player-was-not-linked": "&cThis player was never linked!"
+  "account-not-linked": "&cYour account is not linked to Discord profile yet."
+  "ip-is-ignored": "&cYour IP is ignored by the owner of the account."
+  "bot-not-working": "&cDiscord bot is not working!\nAsk an administrator to resolve this issue."
+  "confirmation-sent": "&aWe've sent you a confirmation via Discord bot"
+  "wait-until-verification": "&cPlease wait until you can receive a new confirmation!\n%s seconds left."
+  "profile-not-found": "&cCouldn't find your profile!\nMake sure you are on the same Discord server as the bot.\nAlso make sure that your DM is open to send messages"
+  "verification": "Verification"
+  "trying-to-join-from-ip": "You are trying to join the server from `%s`"
+  "its-me": "✅ It's me"
+  "ignore-for-30-minutes": "❌ Ignore: 30m"
+  "ignore-for-2-hours": "❌ Ignore: 2h"
+  "ignore-for-1-day": "❌ Ignore: 1d"
+  "allowed": "Allowed!"
+  "allowed-to-join-from-ip": "Successfully allowed to join from `%s`!"
+  "ip-ignored": "IP ignored!"
+  "ip-is-now-ignored": "New verifications from IP `%s` won't come for **%s**"
+  "cancel": "❌ Cancel"
+  "user-with-id-not-found": "Error occurred! User with ID `%s` wasn't found!"
+  "reloaded": "&#14C60D[DiscordVerificator] Reloaded!"
