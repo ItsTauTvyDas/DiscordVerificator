@@ -23,11 +23,14 @@ The **linking process** is **controlled by the administrator** of the server. <b
 In order **to link** the account, the **admin** should run `/link <Player> <Discord ID>`. ([how to get discord id?](https://youtu.be/RzTWH0g2xbo?si=oQT2rCSuf6B3Z5kY))
 <img src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/50193702-ed0f-4b60-9884-58754a25328d">
 
-Then, **when player joins a server**, the **verification code appears**.<br>
+Then, **when a player joins the server**, the **verification code appears**.<br>
 To join the server, the player should run the seen command to the **Discord bot** you've configured: <br>
 <img height=250 src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/1ad48c69-198b-48dc-8f5a-837312f094fa"><br>
 <img src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/235dfef9-f390-4e2b-9bbe-d8e525425fe8"><br>
 <img src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/c2758242-a3cd-4ef3-b6ec-83eb68e9438f">
+
+> [!NOTE]
+> **Verification** is required **once per IP change**
 
 > [!CAUTION]
 > The plugin **will prevent player from joining** if it isn't linked to **Discord** profile yet:
