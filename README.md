@@ -7,17 +7,20 @@
   <a href="https://github.com/vshymanskyy/StandWithUkraine"><img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg"></a>
 </p>
 
- **DiscordVerificator** is a **Spigot** plugin that allows you to do authorization using **Discord bot**.<br><br>
- This plugin is **intended** to be used on **private servers** with the manual player addition because it involves you to manually link each player to their **Discord profile**.<br>
- 
+ **DiscordVerificator** is a **Spigot** plugin that allows you to do authorization using **Discord bot**.<br>
+
+> [!WARNING]
+> This plugin is **intended** to be used on **private servers** with the **manual player addition** because it involves you to manually link each player to their **Discord profile**.
+
  It was developed as an **alternative** for password-based authorization like `/login <password>` on servers with `online-mode` set to `false` (_in server.properties_).
+
 
  ## 🤔 How it works?
 
 This plugin enables players to **link their usernames to their Discord profiles**. <br/>
 
-The **linking process** is **controlled by the administrator** of the server. ([how to get discord id](https://youtu.be/RzTWH0g2xbo?si=oQT2rCSuf6B3Z5kY)) <br/>
-In order **to link** the account, the **admin** should run `/link <Player> <Discord ID>`
+The **linking process** is **controlled by the administrator** of the server. <br/>
+In order **to link** the account, the **admin** should run `/link <Player> <Discord ID>`. ([how to get discord id?](https://youtu.be/RzTWH0g2xbo?si=oQT2rCSuf6B3Z5kY))
 <img src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/50193702-ed0f-4b60-9884-58754a25328d">
 
 Then, **when player joins a server**, the **verification code appears**.<br>
@@ -31,7 +34,7 @@ To join the server, the player should run the seen command to the **Discord bot*
 > <img height=200 src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/ef98c616-3c90-41cf-a111-ae49f416dc3c">
 
 ## 💻 Commands
-- `/link <player> <discordId>` — links the player to its Discord profile. ([how to get discord id](https://youtu.be/RzTWH0g2xbo?si=oQT2rCSuf6B3Z5kY))
+- `/link <player> <discordId>` — links the player to its Discord profile. ([how to get discord id?](https://youtu.be/RzTWH0g2xbo?si=oQT2rCSuf6B3Z5kY))
 - `/unlink <player>` — unlinks the player from its Discord profile.
 - `/dvreload` — reloads the plugin (_including Discord bot_).
   
