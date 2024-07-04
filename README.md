@@ -41,7 +41,7 @@ To join the server, the player should run the seen command to the **Discord bot*
 ## 🔞 Permissions
 - `discordVerificator.link` _(for **operators** by default)_ — Allows to use `/link <player> <discordId>`
 - `discordVerificator.unlink` _(for **operators** by default)_ — Allows to use `/unlink <player>`
-- `discordVerificator.reload` _(for **operators** by default)_ — Allows to use `/reload`
+- `discordVerificator.reload` _(for **operators** by default)_ — Allows to use `/dvreload`
 
 ## 📄 Default config
 > [!IMPORTANT]
