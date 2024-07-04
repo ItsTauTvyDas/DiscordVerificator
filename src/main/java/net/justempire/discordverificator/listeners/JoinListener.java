@@ -1,12 +1,11 @@
 package net.justempire.discordverificator.listeners;
 
 import net.justempire.discordverificator.DiscordVerificatorPlugin;
-import net.justempire.discordverificator.exceptions.NoVerificationsFoundException;
+import net.justempire.discordverificator.exceptions.NoCodesFoundException;
 import net.justempire.discordverificator.models.User;
-import net.justempire.discordverificator.UserService;
-import net.justempire.discordverificator.exceptions.SharedDiscordServerWasNotFoundException;
+import net.justempire.discordverificator.services.ConfirmationCodeService;
+import net.justempire.discordverificator.services.UserManager;
 import net.justempire.discordverificator.exceptions.UserNotFoundException;
-import net.justempire.discordverificator.utils.MessageColorizer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,92 +17,79 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public class JoinListener implements Listener {
-    private UserService userService;
-    private DiscordVerificatorPlugin plugin;
+    private final UserManager userManager;
+    private final DiscordVerificatorPlugin plugin;
+    private final ConfirmationCodeService confirmationCodeService;
 
-    public JoinListener(DiscordVerificatorPlugin plugin, UserService userService) {
+    public JoinListener(DiscordVerificatorPlugin plugin, UserManager userManager, ConfirmationCodeService confirmationCodeService) {
+        this.userManager = userManager;
         this.plugin = plugin;
-        this.userService = userService;
+        this.confirmationCodeService = confirmationCodeService;
     }
 
     @EventHandler
-    public void onPlayerJoined(PlayerLoginEvent event) {
+    public void onPlayerJoined(PlayerLoginEvent event) throws UserNotFoundException {
+        User user;
         Player player = event.getPlayer();
         String ipAddress = event.getAddress().getHostAddress();
 
-        User user;
-
-        try { user = userService.getByMinecraftUsername(player.getName());}
+        // Trying to get the user by his linked in-game username
+        try { user = userManager.getByMinecraftUsername(player.getName());}
         catch (UserNotFoundException e) {
-            String message = MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("account-not-linked"));
-            event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(message);
-            event.disallow(event.getResult(), message);
-            return;
-        }
-
-        // Check if IP is in ignore list
-        if (user.isIpIgnored(ipAddress)) {
-            String message = MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("ip-is-ignored"));
-            event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(message);
-            event.disallow(event.getResult(), message);
+            // If user wasn't found
+            preventJoin(event, getMessage("account-not-linked"));
             return;
         }
 
         // Check if bot is working
         if (!plugin.getDiscordBot().isBotEnabled()) {
-            String message = MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("bot-not-working"));
-            event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(message);
-            event.disallow(event.getResult(), message);
+            preventJoin(event, getMessage("bot-not-working"));
             return;
         }
 
-        // Ensure that no more than 30 seconds have passed
+        // Ensure that no more than 30 seconds have passed since this player last joined
         if (!user.getCurrentAllowedIp().equals(ipAddress)) {
             Date now = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
             Date latestVerificationSent;
             try {
-                latestVerificationSent = user.getLatestVerificationTimeFromIp(ipAddress);
+                latestVerificationSent = user.getLastTimeUserReceivedCode(ipAddress);
                 long differenceInSeconds = getDifferenceInSeconds(latestVerificationSent, now);
                 if (differenceInSeconds < 30) {
-                    String message = MessageColorizer.colorize(String.format(DiscordVerificatorPlugin.getMessage("wait-until-verification"), 30 - differenceInSeconds));
-                    event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-                    event.setKickMessage(message);
-                    event.disallow(event.getResult(), message);
+                    preventJoin(event, String.format(getMessage("wait-until-verification"), 30 - differenceInSeconds));
                     return;
                 }
-            } catch (NoVerificationsFoundException e) {
-                try {
-                    userService.updateLatestVerificationTimeFromIp(user.getDiscordId(), ipAddress);
-                } catch (UserNotFoundException ignored) {
-                }
+            }
+            catch (NoCodesFoundException e) {
+                userManager.updateLastTimeUserReceivedCode(user.getDiscordId(), ipAddress);
             }
         }
 
-        // Send verification to DM
+        // If current IP is not equal to IP in database, show verification code to the user
         if (!user.getCurrentAllowedIp().equals(ipAddress)) {
-            String message = MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("confirmation-sent"));
+            String code = confirmationCodeService.generateVerificationCode(player.getName(), ipAddress);
 
-            try { plugin.getDiscordBot().sendVerificationToUser(user.getDiscordId(), ipAddress); }
-            catch (SharedDiscordServerWasNotFoundException e)
-            { message = MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("profile-not-found")); }
-
-            try { userService.updateLatestVerificationTimeFromIp(user.getDiscordId(), ipAddress); }
-            catch (UserNotFoundException ignored) { }
+            userManager.updateLastTimeUserReceivedCode(user.getDiscordId(), ipAddress);
 
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(message);
-            event.disallow(event.getResult(), message);
+            preventJoin(event, String.format(DiscordVerificatorPlugin.getMessage("confirm-with-command"), code));
         }
     }
 
-    private static long getDifferenceInSeconds(Date startDate, Date endDate) {
+    private long getDifferenceInSeconds(Date startDate, Date endDate) {
         LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         Duration duration = Duration.between(startDateTime, endDateTime);
         return duration.getSeconds();
+    }
+
+    private void preventJoin(PlayerLoginEvent event, String message) {
+        event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+        event.setKickMessage(message);
+        event.disallow(event.getResult(), message);
+    }
+
+    private String getMessage(String key) {
+        return DiscordVerificatorPlugin.getMessage(key);
     }
 }

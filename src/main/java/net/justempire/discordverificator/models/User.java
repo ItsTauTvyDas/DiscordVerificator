@@ -3,17 +3,13 @@ package net.justempire.discordverificator.models;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.justempire.discordverificator.exceptions.MinecraftUsernameAlreadyLinkedException;
-import net.justempire.discordverificator.exceptions.NoVerificationsFoundException;
+import net.justempire.discordverificator.exceptions.NoCodesFoundException;
 import net.justempire.discordverificator.exceptions.NotFoundException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 @JsonAutoDetect
@@ -24,21 +20,18 @@ public class User {
     @JsonProperty("linkedMinecraftUsernames")
     public List<String> linkedMinecraftUsernames;
 
-    @JsonProperty("ignoredIps")
-    private List<IgnoredIp> ignoredIps;
-
     @JsonProperty("latestVerificationsFromIps")
-    private List<LatestVerificationFromIp> latestVerificationsFromIps;
+    private List<LastTimeUserReceivedCode> latestVerificationsFromIps;
 
     @JsonProperty("currentAllowedIp")
     private String currentAllowedIp;
 
+    // Empty constructor for Jackson to serialize/deserialize data from/to JSON
     public User() { }
 
-    public User(String discordUsername, List<String> minecraftUsernames, List<IgnoredIp> ignoredIps, List<LatestVerificationFromIp> latestVerificationsFromIps, String currentAllowedIp) {
+    public User(String discordUsername, List<String> minecraftUsernames, List<LastTimeUserReceivedCode> latestVerificationsFromIps, String currentAllowedIp) {
         this.discordId = discordUsername;
         this.linkedMinecraftUsernames = minecraftUsernames;
-        this.ignoredIps = ignoredIps;
         this.latestVerificationsFromIps = latestVerificationsFromIps;
         this.currentAllowedIp = currentAllowedIp;
     }
@@ -47,29 +40,33 @@ public class User {
         this.currentAllowedIp = currentAllowedIp;
     }
 
-    public void updateLatestVerificationTimeFromIp(String ip) {
+    // Method for updating last time user got a code from certain IP
+    public void updateLastTimeUserReceivedCode(String ip) {
         if (latestVerificationsFromIps == null) latestVerificationsFromIps = new ArrayList<>();
 
         Date now = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-        for (LatestVerificationFromIp verification : latestVerificationsFromIps) {
+        for (LastTimeUserReceivedCode verification : latestVerificationsFromIps) {
             if (!ip.equalsIgnoreCase(verification.getIp())) continue;
 
-            verification.setSentDate(now);
+            verification.setTimeOfReceiving(now);
             return;
         }
 
         // If not found, then create
-        LatestVerificationFromIp verificationFromIp = new LatestVerificationFromIp(ip, now);
+        LastTimeUserReceivedCode verificationFromIp = new LastTimeUserReceivedCode(ip, now);
         latestVerificationsFromIps.add(verificationFromIp);
     }
 
-    public Date getLatestVerificationTimeFromIp(String ip) throws NoVerificationsFoundException {
-        for (LatestVerificationFromIp verification : latestVerificationsFromIps) {
+    // Method for getting last time user got a code from certain IP
+    // Used to be compared in order to create a delay between generating verification codes
+    public Date getLastTimeUserReceivedCode(String ip) throws NoCodesFoundException {
+        for (LastTimeUserReceivedCode verification : latestVerificationsFromIps) {
             if (verification.getIp().equalsIgnoreCase(ip))
-                return verification.getSentDate();
+                return verification.getTimeOfReceiving();
         }
 
-        throw new NoVerificationsFoundException();
+        // Throwing exception if nothing found
+        throw new NoCodesFoundException();
     }
 
     public String getDiscordId() {
@@ -78,47 +75,6 @@ public class User {
 
     public String getCurrentAllowedIp() {
         return currentAllowedIp;
-    }
-
-    public boolean isIpIgnored(String ip) {
-        if (ignoredIps == null) {
-            ignoredIps = new ArrayList<>();
-            return false;
-        }
-
-        Date now = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-
-        for (IgnoredIp ignoredIp : ignoredIps) {
-            if (!ignoredIp.getIpToIgnore().equalsIgnoreCase(ip)) continue;
-            if (now.before(ignoredIp.getIgnoreUntil())) return true;
-            else {
-                ignoredIps.remove(ignoredIp);
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    public void ignoreIp(String ip, Date until) {
-        if (ignoredIps == null) ignoredIps = new ArrayList<>();
-
-        if (isIpIgnored(ip)) return;
-
-        IgnoredIp ignoredIp = new IgnoredIp(ip, until);
-        ignoredIps.add(ignoredIp);
-    }
-
-    public void unIgnoreIp(String ip) {
-        for (int i = 0; i < ignoredIps.size(); i++)
-        {
-            IgnoredIp ignoredIp = ignoredIps.get(i);
-            if (ignoredIp.getIpToIgnore().equalsIgnoreCase(ip))
-            {
-                ignoredIps.remove(ignoredIp);
-                i--;
-            }
-        }
     }
 
     public boolean isMinecraftUsernameLinked(String username) {
@@ -141,6 +97,7 @@ public class User {
     public void unlinkMinecraftUsername(String username) throws NotFoundException {
         for (String linkedName : linkedMinecraftUsernames) {
             if (linkedName.equalsIgnoreCase(username)) {
+                currentAllowedIp = "";
                 linkedMinecraftUsernames.remove(linkedName);
                 return;
             }

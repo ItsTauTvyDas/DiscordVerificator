@@ -10,6 +10,8 @@ import net.justempire.discordverificator.commands.ReloadCommand;
 import net.justempire.discordverificator.commands.UnlinkCommand;
 import net.justempire.discordverificator.discord.DiscordBot;
 import net.justempire.discordverificator.listeners.JoinListener;
+import net.justempire.discordverificator.services.ConfirmationCodeService;
+import net.justempire.discordverificator.services.UserManager;
 import net.justempire.discordverificator.utils.MessageColorizer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,7 +24,8 @@ import java.util.logging.Logger;
 
 public class DiscordVerificatorPlugin extends JavaPlugin {
     private Logger logger;
-    private UserService userService;
+    private UserManager userManager;
+    private ConfirmationCodeService confirmationCodeService;
     private DiscordBot discordBot;
 
     private JDA currentJDA;
@@ -36,8 +39,9 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         // Setting up logger
         logger = this.getLogger();
 
-        // New user repository
-        userService = new UserService(String.format("%s/users.json", getDataFolder()));
+        // Set up services
+        userManager = new UserManager(String.format("%s/users.json", getDataFolder()));
+        confirmationCodeService = new ConfirmationCodeService();
 
         // Setting up the bot
         setupBot();
@@ -46,13 +50,13 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         setupMessages();
 
         // Set up listeners
-        getServer().getPluginManager().registerEvents(new JoinListener(this, userService), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this, userManager, confirmationCodeService), this);
 
         // Setting up commands
-        LinkCommand linkCommand = new LinkCommand(userService);
+        LinkCommand linkCommand = new LinkCommand(userManager);
         getCommand("link").setExecutor(linkCommand);
 
-        UnlinkCommand unlinkCommand = new UnlinkCommand(userService);
+        UnlinkCommand unlinkCommand = new UnlinkCommand(userManager);
         getCommand("unlink").setExecutor(unlinkCommand);
 
         ReloadCommand reloadCommand = new ReloadCommand(this);
@@ -63,8 +67,8 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        userService.onShutDown();
-        currentJDA.shutdownNow();
+        userManager.onShutDown();
+        if (currentJDA != null) currentJDA.shutdown();
         logger.info("Shutting down!");
     }
 
@@ -74,24 +78,21 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
 
     private void setupBot() {
         String token = getConfig().getString("token");
-        DiscordBot bot = new DiscordBot(logger, userService);
+        DiscordBot bot = new DiscordBot(logger, userManager, confirmationCodeService);
 
         try {
-            currentJDA = JDABuilder.createLight(token)
+            this.currentJDA = JDABuilder.createLight(token)
                     .addEventListeners(bot)
                     .enableIntents(
-                            List.of(
-                                    GatewayIntent.GUILD_MEMBERS,
-                                    GatewayIntent.DIRECT_MESSAGE_TYPING
-                            )
+                            List.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGE_TYPING)
                     )
+                    .setAutoReconnect(true)
                     .setChunkingFilter(ChunkingFilter.ALL)
                     .setStatus(OnlineStatus.ONLINE)
                     .build();
         }
-        catch (LoginException e) {
-            logger.severe(MessageColorizer.colorize("Wrong discord bot token provided!"));
-        }
+        catch (LoginException e)
+        { logger.severe(MessageColorizer.colorize("Wrong discord bot token provided!")); }
 
         this.discordBot = bot;
     }
@@ -102,7 +103,7 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         reloadConfig();
         messages = new HashMap<>();
         setupMessages();
-        userService.reload();
+        userManager.reload();
         setupBot();
     }
 
@@ -110,6 +111,7 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         // Getting the messages from the config
         ConfigurationSection configSection = getConfig().getConfigurationSection("messages");
         if (configSection != null) {
+            // Adding these messages to dictionary
             Map<String, Object> messages = configSection.getValues(true);
             for (Map.Entry<String, Object> pair : messages.entrySet()) {
                 DiscordVerificatorPlugin.messages.put(pair.getKey(), pair.getValue().toString());

@@ -1,7 +1,7 @@
 package net.justempire.discordverificator.commands;
 
 import net.justempire.discordverificator.DiscordVerificatorPlugin;
-import net.justempire.discordverificator.UserService;
+import net.justempire.discordverificator.services.UserManager;
 import net.justempire.discordverificator.exceptions.NotFoundException;
 import net.justempire.discordverificator.utils.MessageColorizer;
 import org.bukkit.command.Command;
@@ -10,10 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class UnlinkCommand implements CommandExecutor {
-    private UserService userService;
+    private final UserManager userManager;
 
-    public UnlinkCommand(UserService userService) {
-        this.userService = userService;
+    public UnlinkCommand(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class UnlinkCommand implements CommandExecutor {
         }
 
         try {
-            userService.unlinkUser(strings[0]);
+            userManager.unlinkUser(strings[0]);
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("successfully-unlinked")));
             return true;
         }
