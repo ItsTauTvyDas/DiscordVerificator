@@ -7,7 +7,7 @@
   <a href="https://github.com/vshymanskyy/StandWithUkraine"><img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg"></a>
 </p>
 
- **DiscordVerificator** is a **Spigot** plugin that allows you to do authorization using **Discord bot**.<br>
+ **DiscordVerificator** is a **Spigot** plugin that allows you to do player authentication using **Discord bot**.<br>
 
 > [!WARNING]
 > This plugin is **intended** to be used on **private servers** with the **manual player addition** because it involves you to manually link each player to their **Discord profile**.
