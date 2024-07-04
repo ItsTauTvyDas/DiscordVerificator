@@ -33,7 +33,7 @@ To join the server, the player should run the seen command to the **Discord bot*
 > **Verification** is required **once per IP change**
 
 > [!CAUTION]
-> The plugin **will prevent player from joining** if it isn't linked to **Discord** profile yet:
+> The plugin **will prevent a player from joining** if it wasn't linked to **Discord** profile yet:
 > <img height=200 src="https://github.com/MrQuackDuck/DiscordVerificator/assets/61251075/ef98c616-3c90-41cf-a111-ae49f416dc3c">
 
 ## 💻 Commands
