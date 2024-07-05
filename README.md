@@ -53,26 +53,25 @@ To join the server, the player should run the seen command to the **Discord bot*
 
 ```yml
 # 1. Create discord bot on discord developer portal: https://discord.com/developers/applications
-# 2. In "Bot" tab
-#    - Make sure to enable "Presence Intent"
-#    - Make sure to enable "Server Members Intent"
-#    - Make sure to enable "Message Content Intent"
-# 3. Invite the bot on your Discord server to give an ability for players to send commands to the bot
+# 2. Get token from "Bot" tab
+# 3. Insert the token below
+# 4. Run "/dvreload" command or reload the server
+# 5. Give your players access to send a command to the bot (e.g: invite it to your Discord server)
 token: "DISCORD_BOT_TOKEN"
 
 messages:
   "not-enough-permissions": "&cNot enough permissions!"
-  "invalid-link-format": "&cInvalid format! Please use: /link <Player> <Discord ID>"
-  "invalid-unlink-format": "&cInvalid format! Please use: /unlink <Player>"
+  "invalid-link-format": "&cInvalid format! Please use: /link <player> <discordId>"
+  "invalid-unlink-format": "&cInvalid format! Please use: /unlink <player>"
   "invalid-user-id-format": "&cInvalid Discord ID format!"
   "successfully-linked": "&aSuccessfully linked!"
   "successfully-unlinked": "&aSuccessfully unlinked!"
   "player-already-linked": "&cThis player was already linked!"
   "player-was-not-linked": "&cThis player was never linked!"
   "account-not-linked": "&cYour account is not linked to Discord profile yet."
-  "bot-not-working": "&cDiscord bot is not currently working!\nAsk an administrator to resolve this issue."
-  "confirm-with-command": "&6Confirm your IP via Discord bot\nUsage: &f&n/confirm %s"
-  "wait-until-verification": "&cPlease wait until you can have new code!\n&f&n%s seconds left."
+  "bot-not-working": "&cDiscord bot is not currently working!\nAsk the administrator to resolve this issue."
+  "confirm-with-command": "&6Confirm your IP via our Discord bot\nUsage: &f&n/confirm %s"
+  "wait-until-verification": "&cPlease wait until you can have a new code!\n&f&n%s seconds left."
   "error-occurred": "Error occurred!"
   "its-not-your-account": "Account you're trying to confirm is not linked to your Discord profile"
   "allowed": "Allowed!"
@@ -83,7 +82,7 @@ messages:
   "invalid-code-description": "This verification code is not valid!"
   "invalid-usage": "Invalid usage!"
   "provide-code-please": "Provide verification code, please!"
-  "user-not-found": "User not found!"
+  "user-not-found": "User wasn't found!"
   "user-not-found-description": "It seems like your account wasn't yet linked to any Minecraft username"
   "reloaded": "&#14C60D[DiscordVerificator] Reloaded!"
 ```
