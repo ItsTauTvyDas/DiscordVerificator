@@ -17,19 +17,19 @@ public class LinkCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] arguments) {
         if (!commandSender.hasPermission("discordVerificator.link")) {
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("not-enough-permissions")));
             return true;
         }
 
-        if (strings.length != 2) {
+        if (arguments.length != 2) {
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("invalid-link-format")));
             return true;
         }
 
-        String playerName = strings[0];
-        String discordUserId = strings[1];
+        String playerName = arguments[0];
+        String discordUserId = arguments[1];
 
         if (discordUserId.length() != 17 && discordUserId.length() != 18) {
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("invalid-user-id-format")));

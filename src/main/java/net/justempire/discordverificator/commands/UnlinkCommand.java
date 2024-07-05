@@ -17,19 +17,19 @@ public class UnlinkCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] arguments) {
         if (!commandSender.hasPermission("discordVerificator.unlink")) {
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("not-enough-permissions")));
             return true;
         }
 
-        if (strings.length != 1) {
+        if (arguments.length != 1) {
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("invalid-unlink-format")));
             return true;
         }
 
         try {
-            userManager.unlinkUser(strings[0]);
+            userManager.unlinkUser(arguments[0]);
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("successfully-unlinked")));
             return true;
         }

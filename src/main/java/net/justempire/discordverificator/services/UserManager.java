@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// Performs actions on users and saves/loads them from JSON
+// Performs actions on users and loads/saves from/to JSON
 public class UserManager {
     private List<User> userList = new ArrayList<>();
     private String pathToJson;
@@ -25,9 +25,14 @@ public class UserManager {
         setUp(pathToJson);
     }
 
+    private void addUser(User userToAdd) {
+        userList.add(userToAdd);
+        saveUsers();
+    }
+
     public User getByDiscordId(String discordId) throws UserNotFoundException {
         for (User user : userList) {
-            // Return user if found
+            // Return the user if found
             if (user.getDiscordId().equalsIgnoreCase(discordId))
                 return user;
         }
@@ -76,7 +81,7 @@ public class UserManager {
             return;
         }
 
-        // If user not found, create one
+        // If user wasn't found, create one
         User user = new User(discordId, Arrays.asList(minecraftUsername), new ArrayList<>(), "");
         addUser(user);
     }
@@ -85,39 +90,13 @@ public class UserManager {
         for (User user : userList) {
             if (!user.isMinecraftUsernameLinked(minecraftUsername)) continue;
 
-            try { user.unlinkMinecraftUsername(minecraftUsername); }
-            catch (Exception ignore) { }
+            user.unlinkMinecraftUsername(minecraftUsername);
 
             saveUsers();
             return;
         }
 
         throw new NotFoundException();
-    }
-
-    private void addUser(User userToAdd) {
-        userList.add(userToAdd);
-        saveUsers();
-    }
-
-    public void reload() {
-        setUp(pathToJson);
-    }
-
-    private void setUp(String pathToJson) {
-        try {
-            this.pathToJson = pathToJson;
-
-            // Trying to load users from JSON
-            loadUsers();
-        }
-        catch (MismatchedInputException e) {
-            userList = new ArrayList<>();
-            saveUsers();
-            try { loadUsers(); }
-            catch (IOException ex) { throw new RuntimeException(); }
-        }
-        catch (IOException e) { throw new RuntimeException(e); }
     }
 
     private void loadUsers() throws IOException {
@@ -137,6 +116,26 @@ public class UserManager {
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
         try { objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(pathToJson), userList); }
         catch (IOException e) { throw new RuntimeException(e); }
+    }
+
+    private void setUp(String pathToJson) {
+        try {
+            this.pathToJson = pathToJson;
+
+            // Trying to load users from JSON
+            loadUsers();
+        }
+        catch (MismatchedInputException e) {
+            userList = new ArrayList<>();
+            saveUsers();
+            try { loadUsers(); }
+            catch (IOException ex) { throw new RuntimeException(); }
+        }
+        catch (IOException e) { throw new RuntimeException(e); }
+    }
+
+    public void reload() {
+        setUp(pathToJson);
     }
 
     public void onShutDown() {

@@ -3,7 +3,6 @@ package net.justempire.discordverificator;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.justempire.discordverificator.commands.LinkCommand;
 import net.justempire.discordverificator.commands.ReloadCommand;
@@ -18,7 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -36,10 +34,10 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         // Creating a config if it doesn't exist
         saveDefaultConfig();
 
-        // Setting up logger
+        // Setting up the logger
         logger = this.getLogger();
 
-        // Set up services
+        // Setting up services
         userManager = new UserManager(String.format("%s/users.json", getDataFolder()));
         confirmationCodeService = new ConfirmationCodeService();
 
@@ -49,7 +47,7 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         // Setting up the messages
         setupMessages();
 
-        // Set up listeners
+        // Setting up listeners
         getServer().getPluginManager().registerEvents(new JoinListener(this, userManager, confirmationCodeService), this);
 
         // Setting up commands
@@ -76,6 +74,7 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         return discordBot;
     }
 
+    // Setting up Discord bot
     private void setupBot() {
         String token = getConfig().getString("token");
         DiscordBot bot = new DiscordBot(logger, userManager, confirmationCodeService);
@@ -83,9 +82,6 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
         try {
             this.currentJDA = JDABuilder.createLight(token)
                     .addEventListeners(bot)
-                    .enableIntents(
-                            List.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGE_TYPING)
-                    )
                     .setAutoReconnect(true)
                     .setChunkingFilter(ChunkingFilter.ALL)
                     .setStatus(OnlineStatus.ONLINE)
@@ -98,16 +94,26 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
     }
 
     public void reload() {
+        // Trying to shut down the bot
         try { currentJDA.shutdownNow(); }
-        catch (Exception ignore) { }
+        catch (Exception ignored) { }
+
+        // Reloading the config
         reloadConfig();
-        messages = new HashMap<>();
+
+        // Reloading the messages from config
         setupMessages();
+
+        // Reloading JSON file where users are stored
         userManager.reload();
+
+        // Starting the bot
         setupBot();
     }
 
     private void setupMessages() {
+        messages = new HashMap<>();
+
         // Getting the messages from the config
         ConfigurationSection configSection = getConfig().getConfigurationSection("messages");
         if (configSection != null) {

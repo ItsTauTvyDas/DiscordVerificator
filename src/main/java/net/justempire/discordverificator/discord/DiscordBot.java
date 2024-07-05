@@ -65,15 +65,6 @@ public class DiscordBot extends ListenerAdapter {
         if (event.getName().equals("confirm")) onConfirmSlashCommand(event);
     }
 
-    private MessageEmbed generateEmbed(String title, String description, int color) {
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle(title);
-        builder.setDescription(description);
-        builder.setColor(color);
-
-        return builder.build();
-    }
-
     private void onConfirmSlashCommand(@NotNull SlashCommandEvent event) {
         // Getting ID of sender
         String discordId = event.getUser().getId();
@@ -120,6 +111,15 @@ public class DiscordBot extends ListenerAdapter {
             MessageEmbed embed = generateEmbed(getMessage("user-not-found"), getMessage("user-not-found-description"), 0xF63B2D);
             event.replyEmbeds(embed).setEphemeral(true).complete();
         }
+    }
+
+    private MessageEmbed generateEmbed(String title, String description, int color) {
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle(title);
+        builder.setDescription(description);
+        builder.setColor(color);
+
+        return builder.build();
     }
 
     private void confirmIp(String discordId, String ip) throws UserNotFoundException {
