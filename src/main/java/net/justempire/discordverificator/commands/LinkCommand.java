@@ -31,7 +31,7 @@ public class LinkCommand implements CommandExecutor {
         String playerName = arguments[0];
         String discordUserId = arguments[1];
 
-        if (discordUserId.length() != 17 && discordUserId.length() != 18) {
+        if (discordUserId.length() < 17) {
             commandSender.sendMessage(MessageColorizer.colorize(DiscordVerificatorPlugin.getMessage("invalid-user-id-format")));
             return true;
         }

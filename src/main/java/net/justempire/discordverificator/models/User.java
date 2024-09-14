@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @JsonAutoDetect
@@ -31,7 +32,7 @@ public class User {
 
     public User(String discordUsername, List<String> minecraftUsernames, List<LastTimeUserReceivedCode> latestVerificationsFromIps, String currentAllowedIp) {
         this.discordId = discordUsername;
-        this.linkedMinecraftUsernames = minecraftUsernames;
+        this.linkedMinecraftUsernames = new ArrayList<>(minecraftUsernames);
         this.latestVerificationsFromIps = latestVerificationsFromIps;
         this.currentAllowedIp = currentAllowedIp;
     }
@@ -95,14 +96,15 @@ public class User {
     }
 
     public void unlinkMinecraftUsername(String username) throws NotFoundException {
-        for (String linkedName : linkedMinecraftUsernames) {
+        Iterator<String> iterator = linkedMinecraftUsernames.iterator();
+        while (iterator.hasNext()) {
+            String linkedName = iterator.next();
             if (linkedName.equalsIgnoreCase(username)) {
                 currentAllowedIp = "";
-                linkedMinecraftUsernames.remove(linkedName);
+                iterator.remove();
                 return;
             }
         }
-
         throw new NotFoundException();
     }
 }
