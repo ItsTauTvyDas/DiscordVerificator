@@ -89,7 +89,7 @@ public class DiscordBot extends ListenerAdapter {
     public void onButtonClick(ButtonClickEvent event) {
         if (event.getComponentId().startsWith("choose.player.")) {
             String username = Objects.requireNonNull(event.getComponent()).getLabel();
-            String command = event.getComponentId().split("/", 1)[1];
+            String command = event.getComponentId().split("/", 2)[1];
             processMinecraftSlashCommand(Bukkit.getPlayerExact(username), command, event);
         }
     }
