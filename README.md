@@ -14,7 +14,6 @@
 
  It was developed as an **alternative** for password-based authorization like `/login <password>` on servers with `online-mode` set to `false` (_in server.properties_).
 
-
  ## 🤔 How it works?
 
 This plugin enables players to **link their usernames to their Discord profiles**. <br/>
@@ -40,6 +39,11 @@ To join the server, the player should run the seen command to the **Discord bot*
 - `/link <player> <discordId>` — links the player to its Discord profile. ([how to get discord id?](https://youtu.be/RzTWH0g2xbo?si=oQT2rCSuf6B3Z5kY))
 - `/unlink <player>` — unlinks the player from its Discord profile.
 - `/dvreload` — reloads the plugin (_including Discord bot_).
+
+## ❗❗ Extra feature
+Execute commands via a discord command! This is intended for small private servers. Disabled by default in the configuration!
+One use case I made this for - for Switch Bedrock or any other console players
+- `/mc <minecraft command>` — make player execute command that is linked to the same user that requests this command. 
   
 ## 🔞 Permissions
 - `discordVerificator.link` _(for **operators** by default)_ — Allows to use `/link <player> <discordId>`
@@ -58,6 +62,8 @@ To join the server, the player should run the seen command to the **Discord bot*
 # 4. Run the "/dvreload" command or reload the server
 # 5. Give your players access to send a command to the bot (e.g., invite it to your Discord server)
 token: "DISCORD_BOT_TOKEN"
+
+enable-mc-command: false
 
 messages:
   "not-enough-permissions": "&cNot enough permissions!"
@@ -85,6 +91,16 @@ messages:
   "user-not-found": "User not found!"
   "user-not-found-description": "It seems like your account hasn't been linked to any Minecraft username yet."
   "reloaded": "&#14C60D[DiscordVerificator] Reloaded!"
+  # /mc command messages
+  "minecraft-command": "Command to execute (you must be online on the server)"
+  "minecraft-command-argument": "Minecraft command"
+  "provide-minecraft-command": "You didn't input any command to execute!"
+  "multiple-players-online": "You have online players (connected alts?) that are linked to your discord account, which one do you prefer?"
+  "you-are-not-online": "You're not online on the server!"
+  "minecraft-command-success": "Success!"
+  "minecraft-command-executed": "Command successfully executed, now look at your chat."
+  "minecraft-command-failed": "Failed!"
+  "minecraft-command-fail-to-execute": "Failed to execute the command, did you disconnect?"
 ```
 
 ## ☂ Getting started
