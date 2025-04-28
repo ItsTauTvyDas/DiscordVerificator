@@ -60,9 +60,11 @@ public class DiscordBot extends ListenerAdapter {
         confirmCommandData.addOption(OptionType.STRING, "code", getMessage("verification-code-you-got"));
         commands.addCommands(confirmCommandData).complete();
 
-        CommandData minecraftCommandData = new CommandData("mc", getMessage("minecraft-command-argument"));
-        minecraftCommandData.addOption(OptionType.STRING, "command", getMessage("minecraft-command"));
-        commands.addCommands(minecraftCommandData).complete();
+        if (DiscordVerificatorPlugin.isMinecraftDiscordCommandEnabled()) {
+            CommandData minecraftCommandData = new CommandData("mc", getMessage("minecraft-command-argument"));
+            minecraftCommandData.addOption(OptionType.STRING, "command", getMessage("minecraft-command"));
+            commands.addCommands(minecraftCommandData).complete();
+        }
 
         botEnabled = true;
         logger.info("Bot started!");
@@ -82,7 +84,9 @@ public class DiscordBot extends ListenerAdapter {
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
         // If command is "confirm"
         if (event.getName().equals("confirm")) onConfirmSlashCommand(event.getUser().getId(), event);
-        else if (event.getName().equals("mc")) onMinecraftSlashCommand(event.getUser().getId(), event);
+        // If command is "mc"
+        else if (event.getName().equals("mc") && DiscordVerificatorPlugin.isMinecraftDiscordCommandEnabled())
+            onMinecraftSlashCommand(event.getUser().getId(), event);
     }
 
     @Override
@@ -95,7 +99,7 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     private void processMinecraftSlashCommand(@Nullable Player player, String command, Interaction interaction) {
-        if (player == null || !player.isOnline()) {
+        if (player == null || !player.isOnline() || !DiscordVerificatorPlugin.isMinecraftDiscordCommandEnabled()) {
             interaction.replyEmbeds(generateEmbed(
                             getMessage("minecraft-command-failed"),
                             getMessage("minecraft-command-fail-to-execute"),

@@ -5,6 +5,8 @@
 # 5. Give your players access to send a command to the bot (e.g., invite it to your Discord server)
 token: "DISCORD_BOT_TOKEN"
 
+enable-mc-command: false
+
 messages:
   "not-enough-permissions": "&cNot enough permissions!"
   "invalid-link-format": "&cInvalid format! Please use: /link <player> <discordId>"
@@ -35,7 +37,7 @@ messages:
   "minecraft-command": "Command to execute (you must be online on the server)"
   "minecraft-command-argument": "Minecraft command"
   "provide-minecraft-command": "You didn't input any command to execute!"
-  "multiple-players-online": "You have online players that are linked to your discord account, which one do you prefer?"
+  "multiple-players-online": "You have online players (connected alts?) that are linked to your discord account, which one do you prefer?"
   "you-are-not-online": "You're not online on the server!"
   "minecraft-command-success": "Success!"
   "minecraft-command-executed": "Command successfully executed, now look at your chat."

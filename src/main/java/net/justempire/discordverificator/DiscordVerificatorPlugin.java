@@ -134,5 +134,9 @@ public class DiscordVerificatorPlugin extends JavaPlugin {
 
         return MessageColorizer.colorize(messages.get(key));
     }
+
+    public static boolean isMinecraftDiscordCommandEnabled() {
+        return JavaPlugin.getPlugin(DiscordVerificatorPlugin.class).getConfig().getBoolean("enable-mc-command");
+    }
 }
 
