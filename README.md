@@ -42,8 +42,14 @@ To join the server, the player should run the seen command to the **Discord bot*
 
 ## ❗❗ Extra feature
 Execute commands via a discord command! This is intended for small private servers. Disabled by default in the configuration!
-One use case I made this for - for Switch Bedrock or any other console players
-- `/mc <minecraft command>` — make player execute command that is linked to the same user that requests this command. 
+One use case I made this for - for Switch Bedrock or any other console players.
+- `/mc <minecraft command>` — make player execute command that is linked to the same user that requests this command.
+
+![image](https://github.com/user-attachments/assets/bd1bd690-2aa6-49ec-8702-44d93c7dfd74)
+
+A message if multiple accounts are connected with the same linked discord.
+
+![image](https://github.com/user-attachments/assets/8f9ed2ce-38c1-40ce-a648-d298d43c7b26)
   
 ## 🔞 Permissions
 - `discordVerificator.link` _(for **operators** by default)_ — Allows to use `/link <player> <discordId>`
