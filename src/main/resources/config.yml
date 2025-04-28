@@ -31,3 +31,13 @@ messages:
   "user-not-found": "User not found!"
   "user-not-found-description": "It seems like your account hasn't been linked to any Minecraft username yet."
   "reloaded": "&#14C60D[DiscordVerificator] Reloaded!"
+  # /mc command messages
+  "minecraft-command": "Command to execute (you must be online on the server)"
+  "minecraft-command-argument": "Minecraft command"
+  "provide-minecraft-command": "You didn't input any command to execute!"
+  "multiple-players-online": "You have online players that are linked to your discord account, which one do you prefer?"
+  "you-are-not-online": "You're not online on the server!"
+  "minecraft-command-success": "Success!"
+  "minecraft-command-executed": "Command successfully executed, now look at your chat."
+  "minecraft-command-failed": "Failed!"
+  "minecraft-command-fail-to-execute": "Failed to execute the command, did you disconnect?"
